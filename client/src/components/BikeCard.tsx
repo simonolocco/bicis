@@ -12,10 +12,14 @@ interface BikeCardProps {
     onReturn: (bike: Bike) => void;
 }
 
-export const BikeCard: React.FC<BikeCardProps> = ({ bike, onReturn }) => {
+export const BikeCard: React.FC<BikeCardProps> = ({ bike, onRent, onReturn }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
-    const [endDate, setEndDate] = useState<Date | null>(new Date());
+    const [endDate, setEndDate] = useState<Date | null>(() => {
+        const date = new Date();
+        date.setMinutes(date.getMinutes() + 30);
+        return date;
+    });
     const [customerName, setCustomerName] = useState('');
     const [existingRentals, setExistingRentals] = useState<any[]>([]);
     const [loadingAvailability, setLoadingAvailability] = useState(false);
@@ -112,7 +116,7 @@ export const BikeCard: React.FC<BikeCardProps> = ({ bike, onReturn }) => {
                 description: `Enjoy your ride with ${bike.name}`
             });
             setIsModalOpen(false);
-            onReturn(bike); // Refresh list
+            onRent(bike); // Refresh list
         } catch (error: any) {
             console.error(error);
             const msg = error.response?.data?.error || "Failed to rent bike.";
@@ -227,6 +231,8 @@ export const BikeCard: React.FC<BikeCardProps> = ({ bike, onReturn }) => {
                                             showTimeSelect
                                             dateFormat="MMMM d, yyyy h:mm aa"
                                             minDate={startDate || undefined}
+                                            minTime={startDate ? (endDate && startDate.toDateString() === endDate.toDateString() ? startDate : new Date(0, 0, 0, 0, 0)) : undefined}
+                                            maxTime={startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 23, 59) : undefined}
                                             filterTime={filterTime}
                                             className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none w-full bg-gray-50"
                                             placeholderText="Select end time"
