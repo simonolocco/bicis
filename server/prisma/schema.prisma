@@ -16,6 +16,7 @@ model Bike {
   description String
   pricePerHour Float
   image       String
+  category    String   @default("Urban")
   isRented    Boolean  @default(false)
   rentals     Rental[]
 }
@@ -24,7 +25,10 @@ model Rental {
   id        Int      @id @default(autoincrement())
   bikeId    Int
   bike      Bike     @relation(fields: [bikeId], references: [id])
+  userId    String   @default("guest")
+  customerName String @default("Guest User")
   startTime DateTime @default(now())
+  expectedEndTime DateTime?
   endTime   DateTime?
   totalCost Float?
 }
