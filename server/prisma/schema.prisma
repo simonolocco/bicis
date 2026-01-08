@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Bike {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  pricePerHour Float
+  image       String
+  isRented    Boolean  @default(false)
+  rentals     Rental[]
+}
+
+model Rental {
+  id        Int      @id @default(autoincrement())
+  bikeId    Int
+  bike      Bike     @relation(fields: [bikeId], references: [id])
+  startTime DateTime @default(now())
+  endTime   DateTime?
+  totalCost Float?
+}
